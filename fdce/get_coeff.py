@@ -1,37 +1,8 @@
-# ----------------------------------------------------------------------------
-# Created By:   J. Morgado
-# Created Date: 2022-06-03
-# version = '0.1.0'
-# ----------------------------------------------------------------------------
-
-"""
-Python implementation of the algorithm presented in:
-
-> Fornberg, B. (1988). Generation of finite difference formulas on arbitrarily
-  spaced grids. Mathematics of computation, 51(184), 699-706.
-
-This algorithm can estimate the coefficients of the finite difference formula
-used to estimate any derivative of an unidimensional function at a point x_0
-given a grid of points (mostly neighbors of x_0). The accuracy level is
-determined by the number of grid points used in each estimation.
-
-Highlights:
-
-1. Grid points do not have to be equally spaced.
-2. x_0 does not have to be one of the grid points.
-3. As a result of 2., the algorithm can also be used to interpolate a function
-   at a point x_0, by using the coefficients of the derivative of order zero.
-4. In a single `M` order derivative approximation the coefficients needed to
-   estimate the derivative at any order from zero to `M` are calculated.
-"""
-
-from typing import Optional
-
 import numpy as np
 
 
 def get_coeff(
-    x_0: float, a: np.ndarray, M: int = 1, coeff_matrix: Optional[np.ndarray] = None
+    x_0: float, a: np.ndarray, M: int, coeff_matrix: np.ndarray
 ) -> np.ndarray:
     """
     Returns the coefficients of the finite difference formula for the given
@@ -43,9 +14,9 @@ def get_coeff(
         Point at which the coefficients are evaluated.
     a : np.ndarray
         Grid points.
-    M : int, optional
-        Degree of the derivative. By default 1.
-    coeff_matrix : np.ndarray, optional
+    M : int
+        Degree of the derivative.
+    coeff_matrix : np.ndarray
         If given, the coeffitients are calculated in the given matrix.
 
         This matrix must have shape MxNxN, where N is the number of grid
