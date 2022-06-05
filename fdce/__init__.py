@@ -1,3 +1,5 @@
+from fdce.__version__ import __version__
+
 try:
     from fdce._extension._fdce import get_coeff
 except ImportError:
