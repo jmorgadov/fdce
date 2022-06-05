@@ -5,6 +5,7 @@ setup(
     name="fdce",
     version="0.1.1a3",
     description="Finite difference coefficient estimator",
+    long_description="",
     author="Jorge Morgado Vega",
     author_email="jorge.morgadov@gmail.com",
     requires=["numpy"],
