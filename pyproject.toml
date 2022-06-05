@@ -1,11 +1,7 @@
 [build-system]
-requires = ["setuptools", "setuptools-scm"]
-build-backend = "setuptools.build_meta"
-
-[tool.cibuildwheel]
-# Include path to <arrayobject.h> header
-before-build = [
-	"pip install numpy",
-	"export C_INCLUDE_PATH=$(python -c 'import numpy, os; print(os.path.dirname(numpy.__file__))')/core/include/numpy",
-	"echo 'numpy headers found in $C_INCLUDE_PATH'"
+requires = [
+	"setuptools",
+	"setuptools-scm"
+    "oldest-supported-numpy; python_version>='3.5'",
 ]
+build-backend = "setuptools.build_meta"

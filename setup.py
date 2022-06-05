@@ -1,4 +1,5 @@
-from setuptools import Extension, setup, find_packages
+import numpy as np
+from setuptools import Extension, find_packages, setup
 
 setup(
     name="fdce",
@@ -10,6 +11,10 @@ setup(
     packages=find_packages(),
     python_requires=">=3.8",
     ext_modules=[
-        Extension("fdce._extension._fdce", ["fdce/_extension/_fdce.c"]),
+        Extension(
+            "fdce._extension._fdce",
+            ["fdce/_extension/_fdce.c"],
+            include_dirs=[np.get_include()],
+        )
     ]
 )
