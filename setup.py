@@ -28,7 +28,7 @@ Highlights
 
 setup(
     name="fdce",
-    version="0.1.1a4",
+    version="0.1.1a5",
     description="Finite difference coefficient estimator",
     long_description=long_description,
     author="Jorge Morgado Vega",

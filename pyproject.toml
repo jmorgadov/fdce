@@ -7,5 +7,5 @@ requires = [
 build-backend = "setuptools.build_meta"
 
 [tool.cibuildwheel]
-build = "cp38-*"
-skip = "cp38-manylinux_[aps]*"
+build = "cp3{8..11}-*"
+skip = ["cp3{8..11}-mu*"]
