@@ -5,6 +5,8 @@ build-backend = "setuptools.build_meta"
 [tool.cibuildwheel]
 # Include path to <arrayobject.h> header
 before-build = [
-	"pip install numpy",
+	"pip install numpy"
+]
+enviroment = [
     "C_INCLUDE_PATH=$(python -c 'import numpy, os; print(os.path.dirname(numpy.__file__))')/core/include/numpy"
 ]
