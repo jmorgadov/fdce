@@ -7,6 +7,4 @@ build-backend = "setuptools.build_meta"
 before-build = [
 	"pip install numpy"
 ]
-enviroment = [
-    "C_INCLUDE_PATH=$(python -c 'import numpy, os; print(os.path.dirname(numpy.__file__))')/core/include/numpy"
-]
+enviroment = { C_INCLUDE_PATH="$(python -c 'import numpy, os; print(os.path.dirname(numpy.__file__))')/core/include/numpy" }
