@@ -3,7 +3,7 @@ from setuptools import Extension, find_packages, setup
 
 setup(
     name="fdce",
-    version="0.1.1a3",
+    version="0.1.1a4",
     description="Finite difference coefficient estimator",
     long_description="",
     author="Jorge Morgado Vega",
