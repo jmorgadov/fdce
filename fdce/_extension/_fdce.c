@@ -10,7 +10,6 @@ int N, M;
 #define GET1(arr, i) *((double *)PyArray_GETPTR1(arr, i))
 #define GET3(arr, i, j, k) *((double *)PyArray_GETPTR3(arr, i, j, k))
 #define SET3(arr, i, j, k, val) PyArray_SETITEM(arr, PyArray_GETPTR3(arr, i, j, k), PyFloat_FromDouble(val))
-
 #define MIN(a, b) (a < b ? a : b)
 
 PyArrayObject* _get_coeff(float x_0, PyArrayObject* a, int ord, PyArrayObject* coeff_arr){
@@ -43,30 +42,46 @@ PyArrayObject* _get_coeff(float x_0, PyArrayObject* a, int ord, PyArrayObject* c
 }
 
 PyObject* get_coeff(PyObject* self, PyObject* args, PyObject* keywds){
-	PyObject *a;
-	PyObject *coeff_arr = NULL;
+	PyObject *a_obj;
+	PyObject *coeff_arr_obj = NULL;
+	PyArrayObject *a;
+	PyArrayObject *coeff_arr;
 	float x_0;
 	int ord = 1;
 
 	static char *kwlist[] = { "x_0", "a", "M", "coeff_arr", NULL };
 
-	if (!PyArg_ParseTupleAndKeywords(args, keywds, "dO!|iO!", kwlist, &x_0, &PyArray_Type, &a, &ord, &PyArray_Type, &coeff_arr))
+	if (!PyArg_ParseTupleAndKeywords(args, keywds, "dO!|iO!", kwlist, &x_0, &PyArray_Type, &a_obj, &ord, &PyArray_Type, &coeff_arr_obj))
 		return NULL;
 
-	a = PyArray_FROM_OTF(a, NPY_DOUBLE, NPY_ARRAY_IN_ARRAY);
+	a_obj = PyArray_FROM_OTF(a_obj, NPY_DOUBLE, NPY_ARRAY_IN_ARRAY);
+	a = (PyArrayObject *)a_obj;
 
-	if (coeff_arr == NULL){
-		// Create a new coeff_arr if not provided
-		int a_len = PyArray_DIM((PyArrayObject*)a, 0);
-		npy_intp dims[] = {ord + 1, a_len, a_len};
-		coeff_arr = PyArray_SimpleNew(3, dims, NPY_DOUBLE);
+	// Check dims of `a`
+	if (PyArray_NDIM(a) != 1) {
+		PyErr_SetString(PyExc_ValueError, "Array `a` must be 1-dimensional");
+		return NULL;
 	}
-	else {
-		coeff_arr = PyArray_FROM_OTF(coeff_arr, NPY_DOUBLE, NPY_ARRAY_INOUT_ARRAY);
+	int a_len = PyArray_DIM(a, 0);
+	npy_intp coeff_dims[] = {ord + 1, a_len, a_len};
+
+	// Create a new array if not given coeff_arr
+	coeff_arr_obj = coeff_arr_obj == NULL ? 
+		PyArray_ZEROS(3, coeff_dims, NPY_DOUBLE, 0) :
+		PyArray_FROM_OTF(coeff_arr_obj, NPY_DOUBLE, NPY_ARRAY_INOUT_ARRAY);
+	coeff_arr = (PyArrayObject *)coeff_arr_obj;
+
+	// Check shape of `coeff_arr`
+	if (PyArray_NDIM(coeff_arr) != 3
+		|| PyArray_DIM(coeff_arr, 0) != ord + 1
+		|| PyArray_DIM(coeff_arr, 1) != a_len
+		|| PyArray_DIM(coeff_arr, 2) != a_len) {
+		PyErr_SetString(PyExc_ValueError, "Array `coeff_arr` must have shape [M + 1, N, N], where N is the length of `a`");
+		return NULL;
 	}
 
-	_get_coeff(x_0, (PyArrayObject*)a, ord, (PyArrayObject*)coeff_arr);
-	return PyArray_Return((PyArrayObject*)coeff_arr);
+	PyArrayObject *result = _get_coeff(x_0, a, ord, coeff_arr);
+	return PyArray_Return(result);
 }
 
 
