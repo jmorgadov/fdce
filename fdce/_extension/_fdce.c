@@ -13,7 +13,7 @@ int N, M;
 
 #define MIN(a, b) (a < b ? a : b)
 
-void _get_coeff(float x_0, PyArrayObject* a, int ord, PyArrayObject* coeff_arr){
+PyArrayObject* _get_coeff(float x_0, PyArrayObject* a, int ord, PyArrayObject* coeff_arr){
 	N = PyArray_DIM(a, 0);
 	M = ord + 1;
 	SET3(coeff_arr, 0, 0, 0, 1);
@@ -21,11 +21,11 @@ void _get_coeff(float x_0, PyArrayObject* a, int ord, PyArrayObject* coeff_arr){
 	c1 = 1;
 	for (n = 1; n < N; n++){
 		c2 = 1;
-		m_min = MIN(n, M);
+		m_min = MIN(n + 1, M);
 		for (v = 0; v< n; v++){
 			c3 = GET1(a, n) - GET1(a, v);
 			c2 = c2 * c3;
-			if (n < M) SET3(coeff_arr, n, n - 1, v, c2);
+			if (n < M) SET3(coeff_arr, n, n - 1, v, 0);
 			for (m = 0; m < m_min; m++){
 				d_1 = GET3(coeff_arr, m, n -1, v);
 				d_2 = m == 0 ? 0 : GET3(coeff_arr, m - 1, n - 1, v);
@@ -39,6 +39,7 @@ void _get_coeff(float x_0, PyArrayObject* a, int ord, PyArrayObject* coeff_arr){
 		}
 		c1 = c2;
 	}
+	return coeff_arr;
 }
 
 PyObject* get_coeff(PyObject* self, PyObject* args){
@@ -53,11 +54,7 @@ PyObject* get_coeff(PyObject* self, PyObject* args){
 	coeff_arr = PyArray_FROM_OTF(coeff_arr, NPY_DOUBLE, NPY_ARRAY_INOUT_ARRAY);
 
 	_get_coeff(x_0, (PyArrayObject*)a, ord, (PyArrayObject*)coeff_arr);
-
-	Py_DECREF(a);
-	Py_DECREF(coeff_arr);
-	Py_INCREF(Py_None);
-	return Py_None;
+	return PyArray_Return((PyArrayObject*)coeff_arr);
 }
 
 
