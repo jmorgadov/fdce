@@ -42,16 +42,28 @@ PyArrayObject* _get_coeff(float x_0, PyArrayObject* a, int ord, PyArrayObject* c
 	return coeff_arr;
 }
 
-PyObject* get_coeff(PyObject* self, PyObject* args){
-	PyObject *a, *coeff_arr;
+PyObject* get_coeff(PyObject* self, PyObject* args, PyObject* keywds){
+	PyObject *a;
+	PyObject *coeff_arr = NULL;
 	float x_0;
-	int ord;
+	int ord = 1;
 
-	if (!PyArg_ParseTuple(args, "dO!iO!", &x_0, &PyArray_Type, &a, &ord, &PyArray_Type, &coeff_arr))
+	static char *kwlist[] = { "x_0", "a", "M", "coeff_arr", NULL };
+
+	if (!PyArg_ParseTupleAndKeywords(args, keywds, "dO!|iO!", kwlist, &x_0, &PyArray_Type, &a, &ord, &PyArray_Type, &coeff_arr))
 		return NULL;
 
 	a = PyArray_FROM_OTF(a, NPY_DOUBLE, NPY_ARRAY_IN_ARRAY);
-	coeff_arr = PyArray_FROM_OTF(coeff_arr, NPY_DOUBLE, NPY_ARRAY_INOUT_ARRAY);
+
+	if (coeff_arr == NULL){
+		// Create a new coeff_arr if not provided
+		int a_len = PyArray_DIM((PyArrayObject*)a, 0);
+		npy_intp dims[] = {ord + 1, a_len, a_len};
+		coeff_arr = PyArray_SimpleNew(3, dims, NPY_DOUBLE);
+	}
+	else {
+		coeff_arr = PyArray_FROM_OTF(coeff_arr, NPY_DOUBLE, NPY_ARRAY_INOUT_ARRAY);
+	}
 
 	_get_coeff(x_0, (PyArrayObject*)a, ord, (PyArrayObject*)coeff_arr);
 	return PyArray_Return((PyArrayObject*)coeff_arr);
@@ -59,7 +71,7 @@ PyObject* get_coeff(PyObject* self, PyObject* args){
 
 
 static PyMethodDef _fdce_methods[] = {
-	{"get_coeff", get_coeff, METH_VARARGS, "Get coefficients"},
+	{"get_coeff", (PyCFunction)get_coeff, METH_VARARGS | METH_KEYWORDS, "Get coefficients"},
 	{NULL, NULL, 0, NULL}
 };
 

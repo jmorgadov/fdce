@@ -1,8 +1,10 @@
+from typing import Optional
+
 import numpy as np
 
 
 def get_coeff(
-    x_0: float, a: np.ndarray, M: int, coeff_matrix: np.ndarray
+    x_0: float, a: np.ndarray, M: int = 1, coeff_matrix: Optional[np.ndarray] = None
 ) -> np.ndarray:
     """
     Returns the coefficients of the finite difference formula for the given
@@ -14,13 +16,13 @@ def get_coeff(
         Point at which the coefficients are evaluated.
     a : np.ndarray
         Grid points.
-    M : int
-        Degree of the derivative.
-    coeff_matrix : np.ndarray
+    M : Optional[int]
+        Degree of the derivative. Default is 1.
+    coeff_matrix : Optional[np.ndarray]
         If given, the coeffitients are calculated in the given matrix.
 
-        This matrix must have shape MxNxN, where N is the number of grid
-        points. This is useful for memory efficiency.
+        This matrix must have shape [M + 1, N, N], where N is the number of
+        grid points. This is useful for memory efficiency.
 
     Returns
     -------
