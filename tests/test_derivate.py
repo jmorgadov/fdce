@@ -4,6 +4,7 @@ import pytest
 from fdce._extension._fdce import derivate as ext_derivate
 from fdce.derivate import derivate as src_derivate
 
+
 def _parameters():
     x = np.linspace(-5, 5, 100)
     y = x**2
@@ -15,8 +16,8 @@ def _parameters():
     ]
 
 
-@pytest.mark.parametrize('x, y, order, acc, func, expected', _parameters())
+@pytest.mark.parametrize("x, y, order, acc, func, expected", _parameters())
 def test_derivate(x, y, order, acc, func, expected):
-    res = ext_derivate(x, y, order, acc)
+    res = func(x, y, order, acc)
     assert res.shape == (x.shape[0] - acc,)
     assert np.allclose(res, expected)
