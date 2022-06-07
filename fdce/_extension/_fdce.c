@@ -7,13 +7,12 @@ double d_1, d_2, c1, c2, c3;
 int n, m, v, m_min;
 int N, M;
 
-#define GET1(arr, i) *((double *)PyArray_GETPTR1(arr, i))
 #define GET3(arr, i, j, k) *((double *)PyArray_GETPTR3(arr, i, j, k))
 #define SET3(arr, i, j, k, val) PyArray_SETITEM(arr, PyArray_GETPTR3(arr, i, j, k), PyFloat_FromDouble(val))
 #define MIN(a, b) (a < b ? a : b)
 
-PyArrayObject* _get_coeff(float x_0, PyArrayObject* a, int ord, PyArrayObject* coeff_arr){
-	N = PyArray_DIM(a, 0);
+void _get_coeff(float x_0, double* a, int a_len, int ord, PyArrayObject* coeff_arr){
+	N = a_len;
 	M = ord + 1;
 	SET3(coeff_arr, 0, 0, 0, 1);
 
@@ -22,23 +21,22 @@ PyArrayObject* _get_coeff(float x_0, PyArrayObject* a, int ord, PyArrayObject* c
 		c2 = 1;
 		m_min = MIN(n + 1, M);
 		for (v = 0; v< n; v++){
-			c3 = GET1(a, n) - GET1(a, v);
+			c3 = a[n] - a[v];
 			c2 = c2 * c3;
 			if (n < M) SET3(coeff_arr, n, n - 1, v, 0);
 			for (m = 0; m < m_min; m++){
 				d_1 = GET3(coeff_arr, m, n -1, v);
 				d_2 = m == 0 ? 0 : GET3(coeff_arr, m - 1, n - 1, v);
-				SET3(coeff_arr, m, n, v, ((GET1(a, n) - x_0) * d_1 - m * d_2) / c3);
+				SET3(coeff_arr, m, n, v, ((a[n] - x_0) * d_1 - m * d_2) / c3);
 			}
 		}
 		for (m = 0; m < m_min; m++){
 			d_1 = m == 0? 0 : GET3(coeff_arr, m - 1, n - 1, n - 1);
 			d_2 = GET3(coeff_arr, m, n - 1, n - 1);
-			SET3(coeff_arr, m, n, n, (c1 / c2) * (m * d_1 - (GET1(a, n - 1) - x_0) * d_2));
+			SET3(coeff_arr, m, n, n, (c1 / c2) * (m * d_1 - (a[n - 1] - x_0) * d_2));
 		}
 		c1 = c2;
 	}
-	return coeff_arr;
 }
 
 PyObject* get_coeff(PyObject* self, PyObject* args, PyObject* keywds){
@@ -80,8 +78,10 @@ PyObject* get_coeff(PyObject* self, PyObject* args, PyObject* keywds){
 		return NULL;
 	}
 
-	PyArrayObject *result = _get_coeff(x_0, a, ord, coeff_arr);
-	return PyArray_Return(result);
+	double* a_ptr = (double *)PyArray_DATA(a);
+
+	_get_coeff(x_0, a_ptr, a_len, ord, coeff_arr);
+	return PyArray_Return(coeff_arr);
 }
 
 
