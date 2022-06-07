@@ -85,8 +85,70 @@ PyObject* get_coeff(PyObject* self, PyObject* args, PyObject* keywds){
 }
 
 
+PyArrayObject* _derivate(PyArrayObject* x_arr, PyArrayObject* y_arr, int order, int accuracy){
+
+	// Create result array
+	npy_intp result_dims[] = { PyArray_DIM(y_arr, 0) - accuracy };
+	PyArrayObject *result = (PyArrayObject*)PyArray_EMPTY(1, result_dims, NPY_DOUBLE, 0);
+	double *x_data = (double *)PyArray_DATA(x_arr);
+	double *y_data = (double *)PyArray_DATA(y_arr);
+	int a_len = accuracy + 1;
+
+	// Build coeff array
+    npy_intp coeff_dims[] = { order + 1, a_len, a_len };
+	PyArrayObject *coeff_arr = (PyArrayObject*)PyArray_EMPTY(3, coeff_dims, NPY_DOUBLE, 0);
+
+	for (int i = 0; i < result_dims[0]; i++){
+		// Get alpha values
+		double *a = x_data + i;
+		_get_coeff(x_data[i], a, a_len, order, coeff_arr);
+
+		// Estimate derivative at x[i]
+		double val = 0;
+		for (int j = 0; j < a_len; j++){
+			val += GET3(coeff_arr, order, a_len - 1, j) * y_data[i + j];
+		}
+
+		// Store result
+		PyArray_SETITEM(result, PyArray_GETPTR1(result, i), PyFloat_FromDouble(val));
+	}
+	return result;
+}
+
+
+PyObject* derivate(PyObject* self, PyObject* args, PyObject* keywds){
+	PyObject* x_arr_obj;
+	PyObject* y_arr_obj;
+	int order = 1;
+	int accuracy = 1;
+
+	static char *kwlist[] = { "x_arr", "y_arr", "order", "accuracy", NULL };
+
+	if (!PyArg_ParseTupleAndKeywords(args, keywds, "O!O!|ii", kwlist, &PyArray_Type, &x_arr_obj, &PyArray_Type, &y_arr_obj, &order, &accuracy))
+		return NULL;
+
+	PyArrayObject* x_arr = (PyArrayObject*)PyArray_FROM_OTF(x_arr_obj, NPY_DOUBLE, NPY_ARRAY_IN_ARRAY);
+	PyArrayObject* y_arr = (PyArrayObject*)PyArray_FROM_OTF(y_arr_obj, NPY_DOUBLE, NPY_ARRAY_IN_ARRAY);
+
+	// Check dims of `x_arr` and `y_arr`
+	if (PyArray_NDIM(x_arr) != 1 || PyArray_NDIM(y_arr) != 1) {
+		PyErr_SetString(PyExc_ValueError, "Array `x_arr` and `y_arr` must be 1-dimensional");
+		return NULL;
+	}
+
+	// Check shape of `x_arr` and `y_arr`
+	if (PyArray_DIM(x_arr, 0) != PyArray_DIM(y_arr, 0)) {
+		PyErr_SetString(PyExc_ValueError, "Array `x_arr` and `y_arr` must have the same length");
+		return NULL;
+	}
+
+	return PyArray_Return(_derivate(x_arr, y_arr, order, accuracy));
+}
+
+
 static PyMethodDef _fdce_methods[] = {
 	{"get_coeff", (PyCFunction)get_coeff, METH_VARARGS | METH_KEYWORDS, "Get coefficients"},
+	{"derivate", (PyCFunction)derivate, METH_VARARGS, "Derivate a function given a set of points"},
 	{NULL, NULL, 0, NULL}
 };
 
