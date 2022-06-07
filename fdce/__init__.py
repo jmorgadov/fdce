@@ -1,10 +1,8 @@
-from fdce.__version__ import __version__
-
 try:
-    from fdce._extension._fdce import get_coeff
-    from fdce._extension._fdce import derivate
+    from fdce._extension._fdce import derivate, get_coeff
 except ImportError:
-    from fdce.get_coeff import get_coeff
     from fdce.derivate import derivate
+    from fdce.get_coeff import get_coeff
 
+__version__ = '0.1.1'
 __all__ = ["get_coeff"]
