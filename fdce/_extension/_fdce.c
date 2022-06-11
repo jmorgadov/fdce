@@ -85,7 +85,7 @@ PyObject* get_coeff(PyObject* self, PyObject* args, PyObject* keywds){
 }
 
 
-PyArrayObject* _derivate(PyArrayObject* x_arr, PyArrayObject* y_arr, int order, int accuracy){
+PyArrayObject* _derivative(PyArrayObject* x_arr, PyArrayObject* y_arr, int order, int accuracy){
 
 	// Create result array
 	npy_intp result_dims[] = { PyArray_DIM(y_arr, 0) - accuracy };
@@ -116,7 +116,7 @@ PyArrayObject* _derivate(PyArrayObject* x_arr, PyArrayObject* y_arr, int order, 
 }
 
 
-PyObject* derivate(PyObject* self, PyObject* args, PyObject* keywds){
+PyObject* derivative(PyObject* self, PyObject* args, PyObject* keywds){
 	PyObject* x_arr_obj;
 	PyObject* y_arr_obj;
 	int order = 1;
@@ -142,13 +142,13 @@ PyObject* derivate(PyObject* self, PyObject* args, PyObject* keywds){
 		return NULL;
 	}
 
-	return PyArray_Return(_derivate(x_arr, y_arr, order, accuracy));
+	return PyArray_Return(_derivative(x_arr, y_arr, order, accuracy));
 }
 
 
 static PyMethodDef _fdce_methods[] = {
 	{"get_coeff", (PyCFunction)get_coeff, METH_VARARGS | METH_KEYWORDS, "Get coefficients"},
-	{"derivate", (PyCFunction)derivate, METH_VARARGS, "Derivate a function given a set of points"},
+	{"derivative", (PyCFunction)derivative, METH_VARARGS, "Derivates a function given a set of points"},
 	{NULL, NULL, 0, NULL}
 };
 

@@ -1,7 +1,7 @@
 try:
-    from fdce._extension._fdce import derivate, get_coeff
+    from fdce._extension._fdce import derivative, get_coeff
 except ImportError:
-    from fdce.derivate import derivate
+    from fdce.derivate import derivative
     from fdce.get_coeff import get_coeff
 
 __version__ = '0.1.2a1'
