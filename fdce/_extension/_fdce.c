@@ -64,7 +64,7 @@ PyObject* get_coeff(PyObject* self, PyObject* args, PyObject* keywds){
 	npy_intp coeff_dims[] = {ord + 1, a_len, a_len};
 
 	// Create a new array if not given coeff_arr
-	coeff_arr_obj = coeff_arr_obj == NULL ? 
+	coeff_arr_obj = coeff_arr_obj == NULL ?
 		PyArray_ZEROS(3, coeff_dims, NPY_DOUBLE, 0) :
 		PyArray_FROM_OTF(coeff_arr_obj, NPY_DOUBLE, NPY_ARRAY_INOUT_ARRAY);
 	coeff_arr = (PyArrayObject *)coeff_arr_obj;

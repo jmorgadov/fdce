@@ -17,5 +17,4 @@ determined by the number of grid points used in each estimation.
 3. As a result of 2., the algorithm can also be used to interpolate a function
    at a point `x_0`, by using the coefficients of the derivative of order zero.
 4. In a single `M` order derivative approximation the coefficients needed to
-   estimate the derivative at any order from zero to `M` are calculated. 
-
+   estimate the derivative at any order from zero to `M` are calculated.

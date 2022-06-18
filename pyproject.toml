@@ -9,3 +9,17 @@ build-backend = "setuptools.build_meta"
 [tool.cibuildwheel]
 build = "cp3{8..11}-*"
 skip = ["cp3{8..11}-mu*"]
+
+[tool.isort]
+profile = "black"
+known_first_party = ["fdce"]
+
+[tool.pylint."MESSAGES CONTROL"]
+max-line-length = 88
+good-names = [
+	"x",   # Data from x axis
+	"y",   # Data from y axis
+	"i",   # Usual iteration variable
+	"j",   # Usual iteration variable
+	"k",   # Usual iteration variable
+]

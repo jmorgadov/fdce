@@ -1,3 +1,7 @@
+"""
+This contains all the differentiation related functions.
+"""
+
 import numpy as np
 
 from fdce.get_coeff import get_coeff

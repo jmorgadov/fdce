@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 
 from fdce._extension._fdce import derivative as ext_derivative
-from fdce.derivate import derivative as src_derivative
+from fdce.differentiation import derivative as src_derivative
 
 
 def _parameters():

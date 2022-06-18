@@ -1,3 +1,7 @@
+"""
+This contains the main function of the Fornberg algorithm.
+"""
+
 from typing import Optional
 
 import numpy as np

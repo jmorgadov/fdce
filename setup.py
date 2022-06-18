@@ -1,7 +1,11 @@
+"""
+This contains the setup function for the package.
+"""
+
 import numpy as np
 from setuptools import Extension, find_packages, setup
 
-long_description = """
+LONG_DESCRIPTION = """
 Finite difference coefficients estimator
 ========================================
 
@@ -23,14 +27,14 @@ Highlights
 3. As a result of 2., the algorithm can also be used to interpolate a function
    at a point `x_0`, by using the coefficients of the derivative of order zero.
 4. In a single `M` order derivative approximation the coefficients needed to
-   estimate the derivative at any order from zero to `M` are calculated. 
-""" 
+   estimate the derivative at any order from zero to `M` are calculated.
+"""
 
 setup(
     name="fdce",
     version="0.1.2a1",
     description="Finite difference coefficient estimator",
-    long_description=long_description,
+    long_description=LONG_DESCRIPTION,
     author="Jorge Morgado Vega",
     author_email="jorge.morgadov@gmail.com",
     requires=["numpy"],
@@ -42,5 +46,5 @@ setup(
             ["fdce/_extension/_fdce.c"],
             include_dirs=[np.get_include()],
         )
-    ]
+    ],
 )

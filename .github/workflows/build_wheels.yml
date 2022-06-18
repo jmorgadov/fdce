@@ -2,7 +2,7 @@ name: Build and upload to PyPI
 
 on:
   push:
-    tags:        
+    tags:
       - v*
   workflow_dispatch:
 
